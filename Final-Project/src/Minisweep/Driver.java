@@ -3,9 +3,12 @@ package Minisweep;
 import java.awt.*;
 import javax.swing.*;
 
-public class Driver extends JFrame {
+public class Driver extends JFrame{
+	private JLabel status;
     public Driver() { 	 
-         add(new Field());
+    	 status = new JLabel("");
+    	 add(status, BorderLayout.SOUTH);
+         add(new Field(status));
          setLocationRelativeTo(null);
          setResizable(false);
          setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -13,7 +16,7 @@ public class Driver extends JFrame {
     }
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
-            var window = new Driver();
+            Driver window = new Driver();
             window.setVisible(true);
         });
     }

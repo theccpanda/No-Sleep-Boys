@@ -24,9 +24,10 @@ public class Field extends JPanel {
 	private int[] field;
 	private boolean active;
 	private Image[] img;
-	
+	private JLabel status;
 
-	public Field() {
+	public Field(JLabel status) {
+		this.status = status;
 		load();
 	}
 
@@ -43,7 +44,8 @@ public class Field extends JPanel {
 	}
 
 	private void start() {
-		var random = new Random();
+		status.setText("");
+		Random random = new Random();
 		active = true;
 		field = new int[rows * columns];
 		for (int i = 0; i < rows * columns; i++) {
@@ -51,16 +53,16 @@ public class Field extends JPanel {
 		}
 		int i = 0;
 		while (i < mines) {
-			int position = (int) (rows * columns * random.nextDouble());
-			if ((position < rows * columns) && (field[position] != surprise)) {
-				int current_col = position % columns;
-				field[position] = surprise;
-				i++;
+			int position = (int) (rows * columns * random.nextDouble());        // ||Initializing playing field and randomly positioning mines
+			if ((position < rows * columns) && (field[position] != surprise)) { // \/
+				int current_col = position % columns;							
+				field[position] = surprise;										
+				i++;															
 				if (current_col > 0) {
 					box = position - 1 - columns;
-					if (box >= 0 && field[box] != surprise)
-						field[box] += 1;
-					box = position - 1;
+					if (box >= 0 && field[box] != surprise)                     
+						field[box] += 1;										
+					box = position - 1;											
 					if (box >= 0 && field[box] != surprise)
 						field[box] += 1;
 					box = position + columns - 1;
@@ -81,16 +83,16 @@ public class Field extends JPanel {
 					if (box < rows * columns && field[box] != surprise)
 						field[box] += 1;
 					box = position + 1;
-					if (box < rows * columns && field[box] != surprise)
-						field[box] += 1;
+					if (box < rows * columns && field[box] != surprise)			// /\
+						field[box] += 1;										// ||
 				}
 			}
 		}
 	}
 
 	private void freELO(int j) {
-		int current_col = j % columns;
-		if (current_col > 0) {
+		int current_col = j % columns;											//|| Calculates whether player has clicked on a mine and whether to end the game
+		if (current_col > 0) {													//\/
 			box = j - columns - 1;
 			if (box >= 0 && field[box] > cya) {
 				field[box] -= mystery;
@@ -137,17 +139,17 @@ public class Field extends JPanel {
 			}
 			box = j + 1;
 			if (box < rows * columns && field[box] > cya) {
-				field[box] -= mystery;
-				if (field[box] == phew)
-					freELO(box);
-			}
+				field[box] -= mystery;			
+				if (field[box] == phew)											///\ 
+					freELO(box);												//||
+			}																	
 		}
 
 	}
 
 	@Override
-	public void paintComponent(Graphics g) {
-		int uncover = 0;
+	public void paintComponent(Graphics g) {									//|| Converts numbers in 2D array to pre-loaded images
+		int uncover = 0;														//\/
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < columns; j++) {
 				int box = field[(i * columns) + j];
@@ -165,13 +167,16 @@ public class Field extends JPanel {
 						box = mystery;
 						uncover++;
 					}
-				}
-				g.drawImage(img[box], (j * SCALE), (i * SCALE), this);
+				}																///\
+				g.drawImage(img[box], (j * SCALE), (i * SCALE), this);			//||
 			}
 		}
 		if (uncover == 0 && active) {
 			active = false;
+			status.setText("Ez win.");
 		}
+		else if(!active)
+			status.setText("Rip. Click to try again.");
 	}
 
 	private class MouseInput extends MouseAdapter {
